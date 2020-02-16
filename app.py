@@ -80,9 +80,7 @@ def tobs():
 def api():
     # Displays instructions for using dates in url.
     # Clickable link on home page.
-    return (
-        "Include start date with optional end date to be included after another slash"
-    )
+    return render_template("dates_page.html")
 
 
 cols = ["TMIN", "TMAX", "TAVG"]
@@ -91,19 +89,26 @@ cols = ["TMIN", "TMAX", "TAVG"]
 def start(start):
     # Return a JSON list of the minimum temperature, the average temperature, and the max temperature for a given start or start-end range.
     # When given the start only, calculate `TMIN`, `TAVG`, and `TMAX` for all dates greater than and equal to the start date.
-    data_q = Measurement.query.filter(Measurement.date >= start).all()
-    tobs_l = [row.tobs for row in data_q]
-    calc = [min(tobs_l),max(tobs_l),np.mean(tobs_l)]
-    return jsonify(dict(zip(cols, calc)))
+    try:   
+        data_q = Measurement.query.filter(Measurement.date >= start).all()
+        tobs_l = [row.tobs for row in data_q]
+        calc = [min(tobs_l),max(tobs_l),np.mean(tobs_l)]
+        return jsonify(dict(zip(cols, calc)))
+    except:
+        return render_template("invalid_date.html")
 
 @app.route("/api/v1.0/<start>/<end>")
 def end(start, end):
     # Return a JSON list of the minimum temperature, the average temperature, and the max temperature for a given start or start-end range.
     # When given the start and the end date, calculate the `TMIN`, `TAVG`, and `TMAX` for dates between the start and end date inclusive.
-    data_q = Measurement.query.filter(Measurement.date.between(start, end)).all()
-    tobs_l = [row.tobs for row in data_q]
-    calc = [min(tobs_l),max(tobs_l),np.mean(tobs_l)]
-    return jsonify(dict(zip(cols, calc)))
+
+    try:
+        data_q = Measurement.query.filter(Measurement.date.between(start, end)).all()
+        tobs_l = [row.tobs for row in data_q]
+        calc = [min(tobs_l),max(tobs_l),np.mean(tobs_l)]
+        return jsonify(dict(zip(cols, calc)))
+    except:
+        return render_template("invalid_date.html")
 
 
 if __name__ == "__main__":

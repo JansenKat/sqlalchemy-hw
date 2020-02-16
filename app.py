@@ -83,7 +83,7 @@ def api():
     return render_template("dates_page.html")
 
 
-cols = ["TMIN", "TMAX", "TAVG"]
+cols = ["Min Temperature", "Max Temperature", "Average Temperature"]
 
 @app.route("/api/v1.0/<start>")
 def start(start):
